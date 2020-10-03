@@ -3,6 +3,9 @@ import random
 import datetime
 import copy
 
+
+
+
 s_width = 800
 s_height = 700
 play_width = 300 #360//30 = 10
