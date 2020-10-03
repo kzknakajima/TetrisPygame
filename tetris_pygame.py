@@ -260,7 +260,7 @@ def draw_next_shape(mino,mino2,mino3,surface):
                 pygame.draw.rect(surface,mino.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
 
     next_top_left_x = s_width-play_width/2 -40
-    next_top_left_y = s_height/2 
+    next_top_left_y = s_height/2
     for i in range(len(mino2.shape[mino.rotation])):#4
         for j in range(len(mino2.shape[mino.rotation][i])):#4
             if mino2.shape[mino2.rotation][i][j] == 1:
@@ -404,6 +404,7 @@ def main():
             # draw_text_middle(surface,'YOU LOST!',80,(255,255,255))
             pygame.display.update()
             run = False
+
 
 if __name__ == "__main__":
     main()
