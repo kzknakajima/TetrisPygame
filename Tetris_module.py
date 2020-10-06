@@ -43,8 +43,32 @@ def draw_window(surface,grid):
     #play画面の外枠を描画
     pygame.draw.rect(surface,(0,255,255),(top_left_x,top_left_y,play_width,play_height),3)
 
+#消せるラインの判定と、そのラインを消す関数
 def clear_rows(locked_pos):
     for i,row in enumerate(locked_pos):#i:index, row:values
         if (0,0,0) not in row: #列の中に黒色（背景色）がない（＝全てミノで埋まっている）場合
-            for j in reversed(range(i)):
-                locked_pos[j+1] = copy.deepcopy(locked_pos[j])
+            for j in reversed(range(i)):#下の行から順番に
+                locked_pos[j+1] = copy.deepcopy(locked_pos[j])#１列下に置き換えていく
+
+def get_mino_positions(mino):
+    mino_pos = []
+    for i in range(4):
+        for j in range(4):#4x4
+            if mino.shape[mino.rotation][i][j] == 1:#相対座標上にminoが存在すれば
+                mino_pos.append((mino.x+j,mino.y+i))#minoの絶対座標(x,y)をappend
+    return mino_pos
+
+def valid_space(grid,mino):
+    #grid = 0,0,0となる（＝ミノが存在しない）全ての座標が格納された配列を生成
+    accepted_pos = [[(j,i) for j in range(10) if grid[i][j]==(0,0,0)]for i in range(20) ]
+    #3次元配列になってしまっているので、2次元配列に変更（実質的な中身の値は変わらない）
+    accepted_pos = [_ for sub in accepted_pos for _ in sub]
+
+    #現在minoの座標を取得
+    mino_pos = get_mino_positions(mino)
+
+    #当たり判定
+    for pos in mino_pos:#minoの各セルごとに
+        if not pos in accepted_pos:#acceptedでない場合
+            return False
+    return True

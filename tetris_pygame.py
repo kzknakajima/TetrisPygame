@@ -3,7 +3,7 @@ import pygame
 import random
 import datetime
 import copy
-from Tetris_module import draw_gridlines,draw_window,clear_rows
+from Tetris_module import draw_gridlines,draw_window,clear_rows,get_mino_positions,valid_space
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -228,7 +228,6 @@ def get_shape():
     return Mino(3,0,random.choice(shapes))#starting position and shape
 
 
-
 def draw_next_shape(mino,mino2,mino3,surface):
     label_x = s_width-play_width/2 -40
     label_y = s_height/2-200
@@ -243,38 +242,23 @@ def draw_next_shape(mino,mino2,mino3,surface):
             if mino.shape[mino.rotation][i][j] == 1:
                 pygame.draw.rect(surface,mino.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
 
-    next_top_left_x = s_width-play_width/2 -40
+    next_top_left_x = s_width-play_width/2 -60
     next_top_left_y = s_height/2
     for i in range(len(mino2.shape[mino.rotation])):#4
         for j in range(len(mino2.shape[mino.rotation][i])):#4
             if mino2.shape[mino2.rotation][i][j] == 1:
-                pygame.draw.rect(surface,mino2.color,(next_top_left_x+j*20,next_top_left_y+i*20,20,20),0)
+                pygame.draw.rect(surface,mino2.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
 
-    next_top_left_x = s_width-play_width/2 -40
-    next_top_left_y = s_height/2 + 100
+    next_top_left_x = s_width-play_width/2 -60
+    next_top_left_y = s_height/2 + 150
     for i in range(len(mino3.shape[mino.rotation])):#4
         for j in range(len(mino3.shape[mino.rotation][i])):#4
             if mino3.shape[mino3.rotation][i][j] == 1:
-                pygame.draw.rect(surface,mino3.color,(next_top_left_x+j*20,next_top_left_y+i*20,20,20),0)
+                pygame.draw.rect(surface,mino3.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
 
-def get_mino_positions(mino):
-    mino_pos = []
-    for i in range(4):
-        for j in range(4):
-            if mino.shape[mino.rotation][i][j] == 1:
-                mino_pos.append((mino.x+j,mino.y+i))
-    return mino_pos
 
-def valid_space(grid,mino):
-    accepted_pos = [[(j,i) for j in range(10) if grid[i][j]==(0,0,0)]for i in range(20) ]
-    accepted_pos = [_ for sub in accepted_pos for _ in sub]
 
-    mino_pos = get_mino_positions(mino)
 
-    for pos in mino_pos:
-        if not pos in accepted_pos:
-            return False
-    return True
 
 def lock_mino(locked_pos,mino):
     mino_pos = get_mino_positions(mino)
@@ -361,7 +345,7 @@ def main():
                 next_mino = copy.deepcopy(next_mino2)
                 next_mino2 = copy.deepcopy(next_mino3)
                 next_mino3 = get_shape()
-                clear_rows(locked_positions)#ライン消し判定
+                clear_rows(locked_positions)#ライン消し関数
 
 
         #draw current_mino in grid
