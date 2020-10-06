@@ -3,6 +3,7 @@ import pygame
 import random
 import datetime
 import copy
+from Tetris_module import draw_gridlines
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -221,11 +222,6 @@ def create_grid(locked_pos):
 
     return grid
 
-def draw_gridlines(surface):
-    for i in range(int(play_width/block_size)):
-        pygame.draw.line(surface,(128,128,128),(top_left_x+i*block_size,top_left_y),(top_left_x+i*block_size,top_left_y+play_height),1)
-    for i in range(int(play_height/block_size)):
-        pygame.draw.line(surface,(128,128,128),(top_left_x,top_left_y+i*block_size),(top_left_x+play_width,top_left_y+i*block_size),1)
 
 def get_shape():
     global shapes
