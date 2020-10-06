@@ -1,19 +1,17 @@
+# -*- coding: utf-8 -*-
 import pygame
 import random
 import datetime
 import copy
 
-
-
-
-s_width = 800
-s_height = 700
-play_width = 300 #360//30 = 10
-play_height = 600 #660//30 = 20
+s_width = 800 #display_size
+s_height = 700 #display_size
+play_width = 300 #play_size 360//30 = 10 blocks
+play_height = 600 #play_size 660//30 = 20 blocks
 block_size = 30
 
-top_left_x = (s_width - play_width) / 2
-top_left_y = (s_height - play_height) / 2
+top_left_x = (s_width - play_width) / 2 #play_sizeの左上x座標
+top_left_y = (s_height - play_height) / 2 #play_sizeの左上y座標
 
 # SHAPE FORMATS
 J = [
@@ -216,6 +214,7 @@ class Mino(object):
         self.color = shape_colors[shapes.index(shape)]
         self.rotation = 0 #number from 0-3
 
+#盤面を作成
 def create_grid(locked_pos):
     # grid = [[(0,0,0) for _ in range(int(play_width/block_size))] for _ in range(int(play_height/block_size))]#width,height = 10,20
     grid = copy.deepcopy(locked_pos)
@@ -348,30 +347,33 @@ def check_lost(locked_pos):
 
 
 def main():
-    surface = pygame.display.set_mode((s_width,s_height))
-    pygame.display.set_caption('Tetris')
-    surface.fill((0,0,0))
+    #ゲーム画面生成
+    surface = pygame.display.set_mode((s_width,s_height))#displayを定義
+    pygame.display.set_caption('Tetris')#Top title
+    surface.fill((0,0,0))#(0,0,0) is a black color
 
     locked_positions = [[(0,0,0) for _ in range(int(play_width/block_size))] for _ in range(int(play_height/block_size))]
     grid = create_grid(locked_positions)
 
+    #play画面生成
     for i in range(len(grid)):#20
         for j in range(len(grid[i])):#10
             pygame.draw.rect(surface,(255,255,255),(top_left_x + j*30,top_left_y + i*30,block_size,block_size),0)
 
+    #初期値となるmino取得
     current_mino = get_shape()
     next_mino = get_shape()
     next_mino2 = get_shape()
     next_mino3 = get_shape()
 
-    run = True
+    run = True #While関数を走らせるためのフラグ
 
-    time_t = (datetime.datetime.now()).second
+    time_t = (datetime.datetime.now()).second #秒数取得
     while run:
         grid = create_grid(locked_positions)
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT: #ESC key
                 run = False
                 pygame.display.quit()
 
