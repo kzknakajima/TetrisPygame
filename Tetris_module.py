@@ -44,7 +44,7 @@ def draw_window(surface,grid):
     pygame.draw.rect(surface,(0,255,255),(top_left_x,top_left_y,play_width,play_height),3)
 
 def clear_rows(locked_pos):
-    for i,row in enumerate(locked_pos):
-        if (0,0,0) not in row:
+    for i,row in enumerate(locked_pos):#i:index, row:values
+        if (0,0,0) not in row: #列の中に黒色（背景色）がない（＝全てミノで埋まっている）場合
             for j in reversed(range(i)):
                 locked_pos[j+1] = copy.deepcopy(locked_pos[j])
