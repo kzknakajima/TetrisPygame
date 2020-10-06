@@ -331,8 +331,8 @@ def check_lost(locked_pos):
 def main():
     #ゲーム画面生成
     surface = pygame.display.set_mode((s_width,s_height))#displayを定義
-    pygame.display.set_caption('Tetris')#Top title
-    surface.fill((0,0,0))#(0,0,0) is a black color
+    pygame.display.set_caption('Tetris')#Top bar_title
+    # surface.fill((100,100,100))#(0,0,0) is a black color
 
     locked_positions = [[(0,0,0) for _ in range(int(play_width/block_size))] for _ in range(int(play_height/block_size))]
     grid = create_grid(locked_positions)
