@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pygame
+import copy
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -20,10 +21,17 @@ def draw_gridlines(surface):
 def draw_window(surface,grid):
     surface.fill((0, 0, 100))#initialize
 
+    #Score:
     pygame.font.init()
-    font = pygame.font.SysFont('comicsans',60)#Font, Size
-    label = font.render('Score',1,(255,255,255))#Top title, Color
+    font = pygame.font.SysFont('comicsans',30)#Font, Size
+    label = font.render('Score:',1,(255,255,255))#Top title, Color
     surface.blit(label,(110 - label.get_width()/2, 30))#Location
+
+    #End Game: Enter "esc"
+    pygame.font.init()
+    font = pygame.font.SysFont('comicsans',30)#Font, Size
+    label = font.render('End: Enter "esc"',1,(255,255,255))#Top title, Color
+    surface.blit(label,(110 - label.get_width()/2, 650))#Location
 
     for i in range(len(grid)):#20
         for j in range(len(grid[i])):#10
@@ -33,4 +41,10 @@ def draw_window(surface,grid):
     draw_gridlines(surface)
 
     #play画面の外枠を描画
-    pygame.draw.rect(surface,(255,255,0),(top_left_x,top_left_y,play_width,play_height),5)
+    pygame.draw.rect(surface,(0,255,255),(top_left_x,top_left_y,play_width,play_height),3)
+
+def clear_rows(locked_pos):
+    for i,row in enumerate(locked_pos):
+        if (0,0,0) not in row:
+            for j in reversed(range(i)):
+                locked_pos[j+1] = copy.deepcopy(locked_pos[j])

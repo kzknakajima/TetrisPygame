@@ -3,7 +3,7 @@ import pygame
 import random
 import datetime
 import copy
-from Tetris_module import draw_gridlines,draw_window
+from Tetris_module import draw_gridlines,draw_window,clear_rows
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -315,12 +315,6 @@ def keyOparation(run,key,grid,current_mino):
 
     return run,current_mino
 
-def clear_rows(locked_pos):
-    for i,row in enumerate(locked_pos):
-        if (0,0,0) not in row:
-            for j in reversed(range(i)):
-                locked_pos[j+1] = copy.deepcopy(locked_pos[j])
-
 def check_lost(locked_pos):
     for t in locked_pos[0]:
         if not t == (0,0,0):
@@ -353,21 +347,21 @@ def main():
                 run = False
                 pygame.display.quit()
 
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN: #ESC以外のキー入力
                 run,current_mino = keyOparation(run,event.key,grid,current_mino)
 
-        second = (datetime.datetime.now()).second
-        if time_t != second:
+        second = (datetime.datetime.now()).second #秒数取得
+        if time_t != second: #1秒経過した場合
             time_t = second
-            current_mino.y += 1
-            if not valid_space(grid,current_mino):
-                current_mino.y -= 1
-                locked_positions = lock_mino(locked_positions,current_mino)
+            current_mino.y += 1 #ミノを1マス落下
+            if not valid_space(grid,current_mino):#当たり判定で重なってしまう場合
+                current_mino.y -= 1#ミノを重ならない状態に戻す
+                locked_positions = lock_mino(locked_positions,current_mino)#現在ミノを固定ミノにする
                 current_mino = copy.deepcopy(next_mino)
                 next_mino = copy.deepcopy(next_mino2)
                 next_mino2 = copy.deepcopy(next_mino3)
                 next_mino3 = get_shape()
-                clear_rows(locked_positions)
+                clear_rows(locked_positions)#ライン消し判定
 
 
         #draw current_mino in grid
