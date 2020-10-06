@@ -333,9 +333,8 @@ def main():
     surface = pygame.display.set_mode((s_width,s_height))#displayを定義
     pygame.display.set_caption('Tetris')#Top bar_title
 
+    #固定ミノの情報を保持する配列の初期値（0埋めなので、全部黒になる）
     locked_positions = [[(0,0,0) for _ in range(int(play_width/block_size))] for _ in range(int(play_height/block_size))]
-    grid = create_grid(locked_positions)
-
 
     #初期値となるmino取得
     current_mino = get_shape()
