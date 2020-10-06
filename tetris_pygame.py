@@ -3,7 +3,7 @@ import pygame
 import random
 import datetime
 import copy
-from Tetris_module import draw_gridlines
+from Tetris_module import draw_gridlines,draw_window
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -227,20 +227,6 @@ def get_shape():
     global shapes
     return Mino(3,0,random.choice(shapes))#starting position and shape
 
-def draw_window(surface,grid):
-    surface.fill((0, 0, 0))#initialize
-
-    pygame.font.init()
-    font = pygame.font.SysFont('comicsans',60)
-    label = font.render('Tetris',1,(255,255,255))
-    surface.blit(label,(110 - label.get_width()/2, 30))
-
-    for i in range(len(grid)):#20
-        for j in range(len(grid[i])):#10
-            pygame.draw.rect(surface,grid[i][j],(top_left_x + j*30,top_left_y + i*30,block_size,block_size),0)
-
-    draw_gridlines(surface)
-    pygame.draw.rect(surface,(255,255,0),(top_left_x,top_left_y,play_width,play_height),5)
 
 
 def draw_next_shape(mino,mino2,mino3,surface):
