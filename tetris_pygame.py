@@ -332,15 +332,10 @@ def main():
     #ゲーム画面生成
     surface = pygame.display.set_mode((s_width,s_height))#displayを定義
     pygame.display.set_caption('Tetris')#Top bar_title
-    # surface.fill((100,100,100))#(0,0,0) is a black color
 
     locked_positions = [[(0,0,0) for _ in range(int(play_width/block_size))] for _ in range(int(play_height/block_size))]
     grid = create_grid(locked_positions)
 
-    #play画面生成
-    for i in range(len(grid)):#20
-        for j in range(len(grid[i])):#10
-            pygame.draw.rect(surface,(255,255,255),(top_left_x + j*30,top_left_y + i*30,block_size,block_size),0)
 
     #初期値となるmino取得
     current_mino = get_shape()

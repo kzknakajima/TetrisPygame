@@ -18,7 +18,7 @@ def draw_gridlines(surface):
 
 #ゲーム画面を描画する関数
 def draw_window(surface,grid):
-    surface.fill((0, 0, 0))#initialize
+    surface.fill((0, 0, 100))#initialize
 
     pygame.font.init()
     font = pygame.font.SysFont('comicsans',60)#Font, Size
@@ -27,7 +27,7 @@ def draw_window(surface,grid):
 
     for i in range(len(grid)):#20
         for j in range(len(grid[i])):#10
-            #gridの情報から固定ミノを描画
+            #gridの情報から固定ミノ(ミノがない背景部分も含む)を描画
             pygame.draw.rect(surface,grid[i][j],(top_left_x + j*30,top_left_y + i*30,block_size,block_size),0)
 
     draw_gridlines(surface)
