@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pygame
 import copy
-from Tetris_sub_module import get_mino_positions,draw_gridlines
+from Tetris_sub_module import get_mino_positions,draw_gridlines,update_score
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -13,13 +13,13 @@ top_left_y = (s_height - play_height) / 2 #play_sizeの左上y座標
 
 
 #ゲーム画面を描画する関数
-def draw_window(surface,grid):
+def draw_window(surface,grid,score):
     surface.fill((0, 0, 100))#initialize
 
     #Score:
     pygame.font.init()
     font = pygame.font.SysFont('comicsans',30)#Font, Size
-    label = font.render('Score:',1,(255,255,255))#Top title, Color
+    label = font.render('Score:'+str(score),1,(255,255,255))#Top title, Color
     surface.blit(label,(110 - label.get_width()/2, 30))#Location
 
     #End Game: Enter "esc"
@@ -39,11 +39,13 @@ def draw_window(surface,grid):
     pygame.draw.rect(surface,(0,255,255),(top_left_x,top_left_y,play_width,play_height),3)
 
 #消せるラインの判定と、そのラインを消す関数
-def clear_rows(locked_pos):
+def clear_rows(locked_pos,score):
     for i,row in enumerate(locked_pos):#i:index, row:values
         if (0,0,0) not in row: #列の中に黒色（背景色）がない（＝全てミノで埋まっている）場合
             for j in reversed(range(i)):#下の行から順番に
                 locked_pos[j+1] = copy.deepcopy(locked_pos[j])#１列下に置き換えていく
+            score = update_score(score)
+    return score
 
 #GameOverの判定を行う（不十分）
 def check_lost(locked_pos):

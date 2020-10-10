@@ -24,3 +24,7 @@ def draw_gridlines(surface):
         pygame.draw.line(surface,(128,128,128),(top_left_x+i*block_size,top_left_y),(top_left_x+i*block_size,top_left_y+play_height),1)
     for i in range(int(play_height/block_size)):
         pygame.draw.line(surface,(128,128,128),(top_left_x,top_left_y+i*block_size),(top_left_x+play_width,top_left_y+i*block_size),1)
+
+def update_score(score):
+    score += 100
+    return score

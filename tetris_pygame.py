@@ -235,6 +235,7 @@ def main():
     next_mino2 = get_shape()
     next_mino3 = get_shape()
 
+    score = 0
     run = True #While関数を走らせるためのフラグ
     time_t = (datetime.datetime.now()).second #秒数取得
     #ループ
@@ -260,7 +261,7 @@ def main():
                 next_mino = copy.deepcopy(next_mino2)
                 next_mino2 = copy.deepcopy(next_mino3)
                 next_mino3 = get_shape()
-                clear_rows(locked_positions)#ライン消し関数
+                score = clear_rows(locked_positions,score)#ライン消し関数
 
         #draw current_mino in grid
         for i in range(len(current_mino.shape[current_mino.rotation])):#4
@@ -268,7 +269,7 @@ def main():
                 if current_mino.shape[current_mino.rotation][j][i] == 1:
                     grid[j+current_mino.y][i+current_mino.x] = current_mino.color
 
-        draw_window(surface,grid)#play画面に表示
+        draw_window(surface,grid,score)#play画面に表示
         draw_next_shape(next_mino,next_mino2,next_mino3,surface)#次のミノを表示
         pygame.display.update()#画面更新
 
