@@ -45,7 +45,12 @@ def clear_rows(locked_pos):
             for j in reversed(range(i)):#下の行から順番に
                 locked_pos[j+1] = copy.deepcopy(locked_pos[j])#１列下に置き換えていく
 
-
+#GameOverの判定を行う（不十分）
+def check_lost(locked_pos):
+    for t in locked_pos[0]:
+        if not t == (0,0,0):
+            return True
+    return False
 
 def valid_space(grid,mino):
     #grid = 0,0,0となる（＝ミノが存在しない）全ての座標が格納された配列を生成
@@ -105,3 +110,32 @@ def keyOparation(run,key,grid,current_mino):
                 current_mino.y -= 1
                 flag = False
     return run,current_mino
+
+#画面に次のミノを表示する関数
+def draw_next_shape(mino,mino2,mino3,surface):
+    label_x = s_width-play_width/2 -40
+    label_y = s_height/2-200
+    font = pygame.font.SysFont('comicsans',30)
+    label = font.render('Next Shape',1,(255,255,255))
+    surface.blit(label,(label_x,label_y))
+
+    next_top_left_x = s_width-play_width/2 -60
+    next_top_left_y = s_height/2 - 150
+    for i in range(len(mino.shape[mino.rotation])):#4
+        for j in range(len(mino.shape[mino.rotation][i])):#4
+            if mino.shape[mino.rotation][i][j] == 1:
+                pygame.draw.rect(surface,mino.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
+
+    next_top_left_x = s_width-play_width/2 -60
+    next_top_left_y = s_height/2
+    for i in range(len(mino2.shape[mino.rotation])):#4
+        for j in range(len(mino2.shape[mino.rotation][i])):#4
+            if mino2.shape[mino2.rotation][i][j] == 1:
+                pygame.draw.rect(surface,mino2.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
+
+    next_top_left_x = s_width-play_width/2 -60
+    next_top_left_y = s_height/2 + 150
+    for i in range(len(mino3.shape[mino.rotation])):#4
+        for j in range(len(mino3.shape[mino.rotation][i])):#4
+            if mino3.shape[mino3.rotation][i][j] == 1:
+                pygame.draw.rect(surface,mino3.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)

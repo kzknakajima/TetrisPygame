@@ -4,7 +4,8 @@ import random
 import datetime
 import copy
 from Tetris_module import draw_gridlines,draw_window,clear_rows,get_mino_positions
-from Tetris_module import valid_space,lock_mino,create_grid,keyOparation
+from Tetris_module import valid_space,lock_mino,create_grid,keyOparation,check_lost
+from Tetris_module import draw_next_shape
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -220,50 +221,12 @@ def get_shape():
     global shapes
     return Mino(3,0,random.choice(shapes))#starting position and shape
 
-
-def draw_next_shape(mino,mino2,mino3,surface):
-    label_x = s_width-play_width/2 -40
-    label_y = s_height/2-200
-    font = pygame.font.SysFont('comicsans',30)
-    label = font.render('Next Shape',1,(255,255,255))
-    surface.blit(label,(label_x,label_y))
-
-    next_top_left_x = s_width-play_width/2 -60
-    next_top_left_y = s_height/2 - 150
-    for i in range(len(mino.shape[mino.rotation])):#4
-        for j in range(len(mino.shape[mino.rotation][i])):#4
-            if mino.shape[mino.rotation][i][j] == 1:
-                pygame.draw.rect(surface,mino.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
-
-    next_top_left_x = s_width-play_width/2 -60
-    next_top_left_y = s_height/2
-    for i in range(len(mino2.shape[mino.rotation])):#4
-        for j in range(len(mino2.shape[mino.rotation][i])):#4
-            if mino2.shape[mino2.rotation][i][j] == 1:
-                pygame.draw.rect(surface,mino2.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
-
-    next_top_left_x = s_width-play_width/2 -60
-    next_top_left_y = s_height/2 + 150
-    for i in range(len(mino3.shape[mino.rotation])):#4
-        for j in range(len(mino3.shape[mino.rotation][i])):#4
-            if mino3.shape[mino3.rotation][i][j] == 1:
-                pygame.draw.rect(surface,mino3.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
-
-
-
-def check_lost(locked_pos):
-    for t in locked_pos[0]:
-        if not t == (0,0,0):
-            return True
-    return False
-
-
 def main():
     #ゲーム画面生成
     surface = pygame.display.set_mode((s_width,s_height))#displayを定義
     pygame.display.set_caption('Tetris')#Top bar_title
 
-    #固定ミノの情報を保持する配列の初期値（0埋めなので、全部黒になる）
+    #初期値となる固定ミノの情報を保持する配列を生成（0埋めなので、全部黒になる）
     locked_positions = [[(0,0,0) for _ in range(int(play_width/block_size))] for _ in range(int(play_height/block_size))]
 
     #初期値となるmino取得
@@ -273,8 +236,8 @@ def main():
     next_mino3 = get_shape()
 
     run = True #While関数を走らせるためのフラグ
-
     time_t = (datetime.datetime.now()).second #秒数取得
+    #ループ
     while run:
         #現在gridに固定ミノ座標を登録
         grid = create_grid(locked_positions)
@@ -283,8 +246,7 @@ def main():
             if event.type == pygame.QUIT: #ESC key
                 run = False
                 pygame.display.quit()
-
-            if event.type == pygame.KEYDOWN: #ESC以外のキー入力
+            if event.type == pygame.KEYDOWN: #ESC以外のキー入力（矢印キーとシフトキー）
                 run,current_mino = keyOparation(run,event.key,grid,current_mino)
 
         second = (datetime.datetime.now()).second #秒数取得
@@ -294,12 +256,11 @@ def main():
             if not valid_space(grid,current_mino):#当たり判定で重なってしまう場合
                 current_mino.y -= 1#ミノを重ならない状態に戻す
                 locked_positions = lock_mino(locked_positions,current_mino)#現在ミノを固定ミノにする
-                current_mino = copy.deepcopy(next_mino)
+                current_mino = copy.deepcopy(next_mino)#次ミノを現在ミノに繰りこし
                 next_mino = copy.deepcopy(next_mino2)
                 next_mino2 = copy.deepcopy(next_mino3)
                 next_mino3 = get_shape()
                 clear_rows(locked_positions)#ライン消し関数
-
 
         #draw current_mino in grid
         for i in range(len(current_mino.shape[current_mino.rotation])):#4
@@ -307,16 +268,15 @@ def main():
                 if current_mino.shape[current_mino.rotation][j][i] == 1:
                     grid[j+current_mino.y][i+current_mino.x] = current_mino.color
 
-        draw_window(surface,grid)
-        draw_next_shape(next_mino,next_mino2,next_mino3,surface)
-        pygame.display.update()
+        draw_window(surface,grid)#play画面に表示
+        draw_next_shape(next_mino,next_mino2,next_mino3,surface)#次のミノを表示
+        pygame.display.update()#画面更新
 
         if check_lost(locked_positions):
             print('you lost')
             # draw_text_middle(surface,'YOU LOST!',80,(255,255,255))
             pygame.display.update()
             run = False
-
 
 if __name__ == "__main__":
     main()
