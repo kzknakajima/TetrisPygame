@@ -4,14 +4,13 @@ import random
 import datetime
 import copy
 from Tetris_module import draw_gridlines,draw_window,clear_rows,get_mino_positions
-from Tetris_module import valid_space,lock_mino
+from Tetris_module import valid_space,lock_mino,create_grid,keyOparation
 
 s_width = 800 #display_size
 s_height = 700 #display_size
 play_width = 300 #play_size 360//30 = 10 blocks
 play_height = 600 #play_size 660//30 = 20 blocks
 block_size = 30
-
 top_left_x = (s_width - play_width) / 2 #play_sizeの左上x座標
 top_left_y = (s_height - play_height) / 2 #play_sizeの左上y座標
 
@@ -214,16 +213,9 @@ class Mino(object):
         self.y = y
         self.shape = shape
         self.color = shape_colors[shapes.index(shape)]
-        self.rotation = 0 #number from 0-3
+        self.rotation = 0 #number from 0-3#回転角度の初期値は常に０度
 
-#盤面を作成
-def create_grid(locked_pos):
-    # grid = [[(0,0,0) for _ in range(int(play_width/block_size))] for _ in range(int(play_height/block_size))]#width,height = 10,20
-    grid = copy.deepcopy(locked_pos)
-
-    return grid
-
-
+#ランダムにミノを取得
 def get_shape():
     global shapes
     return Mino(3,0,random.choice(shapes))#starting position and shape
@@ -259,38 +251,6 @@ def draw_next_shape(mino,mino2,mino3,surface):
 
 
 
-def keyOparation(run,key,grid,current_mino):
-    if key == pygame.K_ESCAPE:
-        run = False
-        pygame.display.quit()
-    elif key == pygame.K_LEFT:
-        current_mino.x -= 1
-        if not valid_space(grid,current_mino):
-            current_mino.x += 1
-    elif key == pygame.K_RIGHT:
-        current_mino.x += 1
-        if not valid_space(grid,current_mino):
-            current_mino.x -= 1
-    elif key == pygame.K_DOWN:
-        current_mino.y += 1
-        if not valid_space(grid,current_mino):
-            current_mino.y -= 1
-    elif key == pygame.K_UP:
-        current_mino.rotation += 1
-        current_mino.rotation %= 4
-        if not valid_space(grid,current_mino):
-            current_mino.rotation += 3
-            current_mino.rotation %= 4
-    elif key == pygame.K_RSHIFT:
-        flag = True
-        while flag:
-            current_mino.y += 1
-            if not valid_space(grid,current_mino):
-                current_mino.y -= 1
-                flag = False
-
-    return run,current_mino
-
 def check_lost(locked_pos):
     for t in locked_pos[0]:
         if not t == (0,0,0):
@@ -316,6 +276,7 @@ def main():
 
     time_t = (datetime.datetime.now()).second #秒数取得
     while run:
+        #現在gridに固定ミノ座標を登録
         grid = create_grid(locked_positions)
 
         for event in pygame.event.get():

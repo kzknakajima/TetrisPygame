@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pygame
 import copy
-from Tetris_sub_module import get_mino_positions
+from Tetris_sub_module import get_mino_positions,draw_gridlines
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -11,12 +11,6 @@ block_size = 30
 top_left_x = (s_width - play_width) / 2 #play_sizeの左上x座標
 top_left_y = (s_height - play_height) / 2 #play_sizeの左上y座標
 
-#play画面内にグリッド線を引く関数
-def draw_gridlines(surface):
-    for i in range(int(play_width/block_size)):
-        pygame.draw.line(surface,(128,128,128),(top_left_x+i*block_size,top_left_y),(top_left_x+i*block_size,top_left_y+play_height),1)
-    for i in range(int(play_height/block_size)):
-        pygame.draw.line(surface,(128,128,128),(top_left_x,top_left_y+i*block_size),(top_left_x+play_width,top_left_y+i*block_size),1)
 
 #ゲーム画面を描画する関数
 def draw_window(surface,grid):
@@ -74,3 +68,40 @@ def lock_mino(locked_pos,mino):
     for m in mino_pos:
         locked_pos[m[1]][m[0]] = mino.color # m[0]=x, m[1]=y
     return locked_pos
+
+#固定ミノ座標情報から現在gridを作成
+def create_grid(locked_pos):
+    grid = copy.deepcopy(locked_pos)
+    return grid
+
+
+def keyOparation(run,key,grid,current_mino):
+    if key == pygame.K_ESCAPE:
+        run = False
+        pygame.display.quit()
+    elif key == pygame.K_LEFT:
+        current_mino.x -= 1
+        if not valid_space(grid,current_mino):
+            current_mino.x += 1
+    elif key == pygame.K_RIGHT:
+        current_mino.x += 1
+        if not valid_space(grid,current_mino):
+            current_mino.x -= 1
+    elif key == pygame.K_DOWN:
+        current_mino.y += 1
+        if not valid_space(grid,current_mino):
+            current_mino.y -= 1
+    elif key == pygame.K_UP:
+        current_mino.rotation += 1
+        current_mino.rotation %= 4
+        if not valid_space(grid,current_mino):
+            current_mino.rotation += 3
+            current_mino.rotation %= 4
+    elif key == pygame.K_RSHIFT:
+        flag = True
+        while flag:
+            current_mino.y += 1
+            if not valid_space(grid,current_mino):
+                current_mino.y -= 1
+                flag = False
+    return run,current_mino
