@@ -3,7 +3,8 @@ import pygame
 import random
 import datetime
 import copy
-from Tetris_module import draw_gridlines,draw_window,clear_rows,get_mino_positions,valid_space
+from Tetris_module import draw_gridlines,draw_window,clear_rows,get_mino_positions
+from Tetris_module import valid_space,lock_mino
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -257,15 +258,6 @@ def draw_next_shape(mino,mino2,mino3,surface):
                 pygame.draw.rect(surface,mino3.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
 
 
-
-
-
-def lock_mino(locked_pos,mino):
-    mino_pos = get_mino_positions(mino)
-    for m in mino_pos:
-        locked_pos[m[1]][m[0]] = mino.color # m[0]=x, m[1]=y
-
-    return locked_pos
 
 def keyOparation(run,key,grid,current_mino):
     if key == pygame.K_ESCAPE:

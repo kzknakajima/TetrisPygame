@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pygame
 import copy
+from Tetris_sub_module import get_mino_positions
 
 s_width = 800 #display_size
 s_height = 700 #display_size
@@ -50,13 +51,7 @@ def clear_rows(locked_pos):
             for j in reversed(range(i)):#下の行から順番に
                 locked_pos[j+1] = copy.deepcopy(locked_pos[j])#１列下に置き換えていく
 
-def get_mino_positions(mino):
-    mino_pos = []
-    for i in range(4):
-        for j in range(4):#4x4
-            if mino.shape[mino.rotation][i][j] == 1:#相対座標上にminoが存在すれば
-                mino_pos.append((mino.x+j,mino.y+i))#minoの絶対座標(x,y)をappend
-    return mino_pos
+
 
 def valid_space(grid,mino):
     #grid = 0,0,0となる（＝ミノが存在しない）全ての座標が格納された配列を生成
@@ -72,3 +67,10 @@ def valid_space(grid,mino):
         if not pos in accepted_pos:#acceptedでない場合
             return False
     return True
+
+#現在ミノを固定ミノにする関数
+def lock_mino(locked_pos,mino):
+    mino_pos = get_mino_positions(mino)
+    for m in mino_pos:
+        locked_pos[m[1]][m[0]] = mino.color # m[0]=x, m[1]=y
+    return locked_pos
