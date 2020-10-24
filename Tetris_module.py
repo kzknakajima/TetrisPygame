@@ -115,11 +115,14 @@ def keyOparation(run,key,grid,current_mino):
 
 #画面に次のミノを表示する関数
 def draw_next_shape(mino,mino2,mino3,surface):
-    label_x = s_width-play_width/2 -40
+    label_x = s_width-play_width/2 -10
     label_y = s_height/2-200
     font = pygame.font.SysFont('comicsans',30)
-    label = font.render('Next Shape',1,(255,255,255))
+    label = font.render('Next',1,(255,255,255))
     surface.blit(label,(label_x,label_y))
+
+    #next_minoを表示する外枠を表示
+    pygame.draw.rect(surface,(255,255,255),(label_x-40,label_y+20,130,480),3)
 
     next_top_left_x = s_width-play_width/2 -60
     next_top_left_y = s_height/2 - 150
