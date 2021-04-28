@@ -1,2 +1,3 @@
-これはreadme.mdのサンプル作成です。
-githubのwebページからファイルを作成しています。
+pythonでtetris（テトリス）を作成しました。
+
+pygame.pyを実行すると、テトリスで遊べます。
