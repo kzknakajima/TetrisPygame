@@ -2,41 +2,43 @@
 import pygame
 import copy
 from Tetris_sub_module import get_mino_positions,draw_gridlines,update_score
-
-s_width = 800 #display_size
-s_height = 700 #display_size
-play_width = 300 #play_size 360//30 = 10 blocks
-play_height = 600 #play_size 660//30 = 20 blocks
-block_size = 30
-top_left_x = (s_width - play_width) / 2 #play_sizeの左上x座標
-top_left_y = (s_height - play_height) / 2 #play_sizeの左上y座標
+from constants import (
+    S_WIDTH, S_HEIGHT, PLAY_WIDTH, PLAY_HEIGHT, BLOCK_SIZE,
+    TOP_LEFT_X, TOP_LEFT_Y, GRID_WIDTH, GRID_HEIGHT,
+    COLOR_BACKGROUND, COLOR_BORDER, COLOR_TEXT, COLOR_NEXT_FRAME,
+    FONT_NAME, FONT_SIZE, BORDER_WIDTH,
+    SCORE_LABEL_X, SCORE_LABEL_Y, END_MSG_X, END_MSG_Y,
+    NEXT_LABEL_OFFSET_X, NEXT_LABEL_OFFSET_Y,
+    NEXT_FRAME_OFFSET_X, NEXT_FRAME_OFFSET_Y, NEXT_FRAME_WIDTH, NEXT_FRAME_HEIGHT,
+    NEXT_MINO_OFFSET_X, NEXT_MINO_1_OFFSET_Y, NEXT_MINO_2_OFFSET_Y, NEXT_MINO_3_OFFSET_Y,
+    MINO_ROTATION_STATES
+)
 
 
 #ゲーム画面を描画する関数
 def draw_window(surface,grid,score):
-    surface.fill((0, 0, 100))#initialize
+    surface.fill(COLOR_BACKGROUND)#initialize
+
+    pygame.font.init()
+    font = pygame.font.SysFont(FONT_NAME, FONT_SIZE)#Font, Size
 
     #Score:
-    pygame.font.init()
-    font = pygame.font.SysFont('comicsans',30)#Font, Size
-    label = font.render('Score:'+str(score),1,(255,255,255))#Top title, Color
-    surface.blit(label,(110 - label.get_width()/2, 30))#Location
+    label = font.render('Score:'+str(score), 1, COLOR_TEXT)#Top title, Color
+    surface.blit(label, (SCORE_LABEL_X - label.get_width()/2, SCORE_LABEL_Y))#Location
 
     #End Game: Enter "esc"
-    pygame.font.init()
-    font = pygame.font.SysFont('comicsans',30)#Font, Size
-    label = font.render('End: Enter "esc"',1,(255,255,255))#Top title, Color
-    surface.blit(label,(110 - label.get_width()/2, 650))#Location
+    label = font.render('End: Enter "esc"', 1, COLOR_TEXT)#Top title, Color
+    surface.blit(label, (END_MSG_X - label.get_width()/2, END_MSG_Y))#Location
 
     for i in range(len(grid)):#20
         for j in range(len(grid[i])):#10
             #gridの情報から固定ミノ(ミノがない背景部分も含む)を描画
-            pygame.draw.rect(surface,grid[i][j],(top_left_x + j*30,top_left_y + i*30,block_size,block_size),0)
+            pygame.draw.rect(surface, grid[i][j], (TOP_LEFT_X + j*BLOCK_SIZE, TOP_LEFT_Y + i*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
 
     draw_gridlines(surface)
 
     #play画面の外枠を描画
-    pygame.draw.rect(surface,(0,255,255),(top_left_x,top_left_y,play_width,play_height),3)
+    pygame.draw.rect(surface, COLOR_BORDER, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), BORDER_WIDTH)
 
 #消せるラインの判定と、そのラインを消す関数
 def clear_rows(locked_pos,score):
@@ -82,65 +84,64 @@ def create_grid(locked_pos):
     return grid
 
 
-def keyOparation(run,key,grid,current_mino):
+def keyOparation(game_running, key, grid, current_mino):
     if key == pygame.K_ESCAPE:
-        run = False
+        game_running = False
         pygame.display.quit()
     elif key == pygame.K_LEFT:
         current_mino.x -= 1
-        if not valid_space(grid,current_mino):
+        if not valid_space(grid, current_mino):
             current_mino.x += 1
     elif key == pygame.K_RIGHT:
         current_mino.x += 1
-        if not valid_space(grid,current_mino):
+        if not valid_space(grid, current_mino):
             current_mino.x -= 1
     elif key == pygame.K_DOWN:
         current_mino.y += 1
-        if not valid_space(grid,current_mino):
+        if not valid_space(grid, current_mino):
             current_mino.y -= 1
     elif key == pygame.K_UP:
         current_mino.rotation += 1
-        current_mino.rotation %= 4
-        if not valid_space(grid,current_mino):
+        current_mino.rotation %= MINO_ROTATION_STATES
+        if not valid_space(grid, current_mino):
             current_mino.rotation += 3
-            current_mino.rotation %= 4
+            current_mino.rotation %= MINO_ROTATION_STATES
     elif key == pygame.K_RSHIFT:
-        flag = True
-        while flag:
+        is_falling = True
+        while is_falling:
             current_mino.y += 1
-            if not valid_space(grid,current_mino):
+            if not valid_space(grid, current_mino):
                 current_mino.y -= 1
-                flag = False
-    return run,current_mino
+                is_falling = False
+    return game_running, current_mino
+
+#1つのミノを指定座標に描画する関数
+def _draw_single_mino(mino, surface, x, y):
+    """指定された位置に1つのミノを描画する"""
+    for i in range(len(mino.shape[mino.rotation])):
+        for j in range(len(mino.shape[mino.rotation][i])):
+            if mino.shape[mino.rotation][i][j] == 1:
+                pygame.draw.rect(surface, mino.color,
+                               (x + j*BLOCK_SIZE, y + i*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
 
 #画面に次のミノを表示する関数
-def draw_next_shape(mino,mino2,mino3,surface):
-    label_x = s_width-play_width/2 -10
-    label_y = s_height/2-200
-    font = pygame.font.SysFont('comicsans',30)
-    label = font.render('Next',1,(255,255,255))
-    surface.blit(label,(label_x,label_y))
+def draw_next_shape(mino, mino2, mino3, surface):
+    label_x = S_WIDTH - PLAY_WIDTH/2 + NEXT_LABEL_OFFSET_X
+    label_y = S_HEIGHT/2 + NEXT_LABEL_OFFSET_Y
+    font = pygame.font.SysFont(FONT_NAME, FONT_SIZE)
+    label = font.render('Next', 1, COLOR_TEXT)
+    surface.blit(label, (label_x, label_y))
 
     #next_minoを表示する外枠を表示
-    pygame.draw.rect(surface,(255,255,255),(label_x-40,label_y+20,130,480),3)
+    pygame.draw.rect(surface, COLOR_NEXT_FRAME,
+                    (label_x + NEXT_FRAME_OFFSET_X, label_y + NEXT_FRAME_OFFSET_Y,
+                     NEXT_FRAME_WIDTH, NEXT_FRAME_HEIGHT), BORDER_WIDTH)
 
-    next_top_left_x = s_width-play_width/2 -60
-    next_top_left_y = s_height/2 - 150
-    for i in range(len(mino.shape[mino.rotation])):#4
-        for j in range(len(mino.shape[mino.rotation][i])):#4
-            if mino.shape[mino.rotation][i][j] == 1:
-                pygame.draw.rect(surface,mino.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
+    # 3つのミノを順番に描画
+    next_minos = [mino, mino2, mino3]
+    y_offsets = [NEXT_MINO_1_OFFSET_Y, NEXT_MINO_2_OFFSET_Y, NEXT_MINO_3_OFFSET_Y]
+    base_x = S_WIDTH - PLAY_WIDTH/2 + NEXT_MINO_OFFSET_X
+    base_y = S_HEIGHT/2
 
-    next_top_left_x = s_width-play_width/2 -60
-    next_top_left_y = s_height/2
-    for i in range(len(mino2.shape[mino.rotation])):#4
-        for j in range(len(mino2.shape[mino.rotation][i])):#4
-            if mino2.shape[mino2.rotation][i][j] == 1:
-                pygame.draw.rect(surface,mino2.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
-
-    next_top_left_x = s_width-play_width/2 -60
-    next_top_left_y = s_height/2 + 150
-    for i in range(len(mino3.shape[mino.rotation])):#4
-        for j in range(len(mino3.shape[mino.rotation][i])):#4
-            if mino3.shape[mino3.rotation][i][j] == 1:
-                pygame.draw.rect(surface,mino3.color,(next_top_left_x+j*30,next_top_left_y+i*30,block_size,block_size),0)
+    for next_mino, y_offset in zip(next_minos, y_offsets):
+        _draw_single_mino(next_mino, surface, base_x, base_y + y_offset)
