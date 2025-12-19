@@ -4,7 +4,7 @@ import random
 import datetime
 import copy
 from Tetris_module import draw_gridlines,draw_window,clear_rows,get_mino_positions
-from Tetris_module import valid_space,lock_mino,create_grid,keyOparation,check_lost
+from Tetris_module import valid_space,lock_mino,create_grid,keyOperation,check_lost
 from Tetris_module import draw_next_shape
 from constants import (
     S_WIDTH, S_HEIGHT, PLAY_WIDTH, PLAY_HEIGHT, BLOCK_SIZE,
@@ -51,7 +51,7 @@ def main():
                 game_running = False
                 pygame.display.quit()
             if event.type == pygame.KEYDOWN:  # ESC以外のキー入力（矢印キーとシフトキー）
-                game_running, current_mino = keyOparation(game_running, event.key, grid, current_mino)
+                game_running, current_mino = keyOperation(game_running, event.key, grid, current_mino)
 
         current_second = (datetime.datetime.now()).second  # 現在の秒数取得
         if last_fall_second != current_second:  # 1秒経過した場合
