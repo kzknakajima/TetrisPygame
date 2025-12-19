@@ -84,7 +84,7 @@ def create_grid(locked_pos):
     return grid
 
 
-def keyOparation(game_running, key, grid, current_mino):
+def keyOperation(game_running, key, grid, current_mino):
     if key == pygame.K_ESCAPE:
         game_running = False
         pygame.display.quit()
