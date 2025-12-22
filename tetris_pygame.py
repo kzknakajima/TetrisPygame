@@ -2,9 +2,9 @@
 import pygame
 import random
 import copy
-from Tetris_module import draw_gridlines,draw_window,clear_rows,get_mino_positions
-from Tetris_module import valid_space,lock_mino,create_grid,keyOperation,check_lost
-from Tetris_module import draw_next_shape
+from game_logic import draw_gridlines,draw_window,clear_rows,get_mino_positions
+from game_logic import valid_space,lock_mino,create_grid,keyOperation,check_lost
+from game_logic import draw_next_shape
 from constants import (
     S_WIDTH, S_HEIGHT, PLAY_WIDTH, PLAY_HEIGHT, BLOCK_SIZE,
     GRID_WIDTH, GRID_HEIGHT, MINO_START_X, MINO_START_Y, MINO_GRID_SIZE,
