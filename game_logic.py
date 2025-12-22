@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pygame
 import copy
-from Tetris_sub_module import get_mino_positions,draw_gridlines,update_score
+from helpers import get_mino_positions,draw_gridlines,update_score
 from constants import (
     S_WIDTH, S_HEIGHT, PLAY_WIDTH, PLAY_HEIGHT, BLOCK_SIZE,
     TOP_LEFT_X, TOP_LEFT_Y, GRID_WIDTH, GRID_HEIGHT,
