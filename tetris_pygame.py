@@ -84,6 +84,11 @@ def render_game(surface, grid, current_mino, next_minos, score):
     draw_next_shape(next_minos[0], next_minos[1], next_minos[2], surface)
     pygame.display.update()
 
+def cleanup_game():
+    """ゲーム終了時のクリーンアップ処理を一元管理"""
+    pygame.display.quit()
+    pygame.quit()
+
 def main():
     """メインゲームループ"""
     # 初期化
@@ -102,10 +107,13 @@ def main():
         # イベント処理
         game_running, key = handle_events()
         if not game_running:
-            pygame.display.quit()
-            break
+            break  # 終了条件1: ×ボタン
+
         if key:
-            game_running, current_mino = keyOperation(game_running, key, grid, current_mino)
+            if key == pygame.K_ESCAPE:
+                game_running = False  # 終了条件2: ESCキー
+            else:
+                game_running, current_mino = keyOperation(game_running, key, grid, current_mino)
 
         # 自動落下処理
         current_time = pygame.time.get_ticks()
@@ -120,7 +128,10 @@ def main():
         if check_lost(locked_positions):
             print('you lost')
             pygame.display.update()
-            game_running = False
+            game_running = False  # 終了条件3: ゲームオーバー
+
+    # 終了処理（どの終了方法でも必ずここを通る）
+    cleanup_game()
 
 if __name__ == "__main__":
     main()
