@@ -29,6 +29,10 @@ MINO_GRID_SIZE = 5
 MINO_INNER_GRID = 4  # ミノの実際の描画サイズ（5x5グリッドの中の4x4）
 SCORE_PER_LINE = 100
 
+# Time control
+FALL_INTERVAL = 1000  # ミノの自動落下間隔（ミリ秒）
+FPS = 60  # フレームレート
+
 # Mino starting position
 MINO_START_X = 3
 MINO_START_Y = 0

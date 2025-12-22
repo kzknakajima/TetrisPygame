@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 import pygame
 import random
-import datetime
 import copy
 from Tetris_module import draw_gridlines,draw_window,clear_rows,get_mino_positions
 from Tetris_module import valid_space,lock_mino,create_grid,keyOperation,check_lost
 from Tetris_module import draw_next_shape
 from constants import (
     S_WIDTH, S_HEIGHT, PLAY_WIDTH, PLAY_HEIGHT, BLOCK_SIZE,
-    GRID_WIDTH, GRID_HEIGHT, MINO_START_X, MINO_START_Y, MINO_GRID_SIZE
+    GRID_WIDTH, GRID_HEIGHT, MINO_START_X, MINO_START_Y, MINO_GRID_SIZE,
+    FALL_INTERVAL, FPS
 )
 from shapes import SHAPES, SHAPE_COLORS
 
@@ -40,9 +40,11 @@ def main():
 
     score = 0
     game_running = True  # ゲームループを走らせるためのフラグ
-    last_fall_second = (datetime.datetime.now()).second  # 最後に落下した時刻（秒）
+    clock = pygame.time.Clock()  # フレームレート制御用
+    last_fall_time = pygame.time.get_ticks()  # 最後に落下した時刻（ミリ秒）
     #ループ
     while game_running:
+        clock.tick(FPS)  # フレームレートを制限
         #現在gridに固定ミノ座標を登録
         grid = create_grid(locked_positions)
 
@@ -53,9 +55,9 @@ def main():
             if event.type == pygame.KEYDOWN:  # ESC以外のキー入力（矢印キーとシフトキー）
                 game_running, current_mino = keyOperation(game_running, event.key, grid, current_mino)
 
-        current_second = (datetime.datetime.now()).second  # 現在の秒数取得
-        if last_fall_second != current_second:  # 1秒経過した場合
-            last_fall_second = current_second
+        current_time = pygame.time.get_ticks()  # 現在時刻取得（ミリ秒）
+        if current_time - last_fall_time >= FALL_INTERVAL:  # 指定間隔経過した場合
+            last_fall_time = current_time
             current_mino.y += 1  # ミノを1マス落下
             if not valid_space(grid, current_mino):  # 当たり判定で重なってしまう場合
                 current_mino.y -= 1  # ミノを重ならない状態に戻す
