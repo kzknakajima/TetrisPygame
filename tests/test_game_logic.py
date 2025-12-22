@@ -1,5 +1,7 @@
 import pygame
 
+# game_logicの主要関数に対する単体テスト
+
 from constants import GRID_HEIGHT, GRID_WIDTH, SCORE_PER_LINE
 from game_logic import (
     clear_rows,
