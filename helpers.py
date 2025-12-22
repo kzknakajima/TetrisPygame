@@ -6,16 +6,16 @@ from constants import (
     MINO_INNER_GRID, COLOR_GRID_LINE
 )
 
-#ミノの絶対座標を取得する関数
+# ミノの絶対座標を取得する関数
 def get_mino_positions(mino):
     mino_pos = []
     for i in range(MINO_INNER_GRID):
         for j in range(MINO_INNER_GRID):
-            if mino.shape[mino.rotation][i][j] == 1:#相対座標上にminoが存在すれば
-                mino_pos.append((mino.x+j,mino.y+i))#minoの絶対座標(x,y)をappend
+            if mino.shape[mino.rotation][i][j] == 1:  # 相対座標上にminoが存在すれば
+                mino_pos.append((mino.x+j,mino.y+i))  # minoの絶対座標(x,y)をappend
     return mino_pos
 
-#play画面内にグリッド線を引く関数
+# play画面内にグリッド線を引く関数
 def draw_gridlines(surface):
     for i in range(int(PLAY_WIDTH/BLOCK_SIZE)):
         pygame.draw.line(surface,COLOR_GRID_LINE,(TOP_LEFT_X+i*BLOCK_SIZE,TOP_LEFT_Y),(TOP_LEFT_X+i*BLOCK_SIZE,TOP_LEFT_Y+PLAY_HEIGHT),1)

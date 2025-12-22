@@ -20,9 +20,9 @@ class Mino(object):
         self.color = SHAPE_COLORS[SHAPES.index(shape)]
         self.rotation = 0  # 回転角度の初期値は常に0度
 
-#ランダムにミノを取得
+# ランダムにミノを取得
 def get_shape():
-    return Mino(MINO_START_X, MINO_START_Y, random.choice(SHAPES))  # starting position and shape
+    return Mino(MINO_START_X, MINO_START_Y, random.choice(SHAPES))  # 開始位置と形状
 
 def init_game():
     """ゲームの初期化：画面設定とグリッド生成"""
