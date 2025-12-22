@@ -11,7 +11,7 @@ from constants import (
     NEXT_LABEL_OFFSET_X, NEXT_LABEL_OFFSET_Y,
     NEXT_FRAME_OFFSET_X, NEXT_FRAME_OFFSET_Y, NEXT_FRAME_WIDTH, NEXT_FRAME_HEIGHT,
     NEXT_MINO_OFFSET_X, NEXT_MINO_1_OFFSET_Y, NEXT_MINO_2_OFFSET_Y, NEXT_MINO_3_OFFSET_Y,
-    MINO_ROTATION_STATES
+    MINO_ROTATION_STATES, MINO_GRID_SIZE
 )
 
 
@@ -58,7 +58,7 @@ def check_lost(locked_pos):
 
 def valid_space(grid,mino):
     #grid = 0,0,0となる（＝ミノが存在しない）全ての座標が格納された配列を生成
-    accepted_pos = [[(j,i) for j in range(10) if grid[i][j]==(0,0,0)]for i in range(20) ]
+    accepted_pos = [[(j,i) for j in range(GRID_WIDTH) if grid[i][j]==(0,0,0)]for i in range(GRID_HEIGHT) ]
     #3次元配列になってしまっているので、2次元配列に変更（実質的な中身の値は変わらない）
     accepted_pos = [_ for sub in accepted_pos for _ in sub]
 
@@ -118,8 +118,8 @@ def keyOperation(game_running, key, grid, current_mino):
 #1つのミノを指定座標に描画する関数
 def _draw_single_mino(mino, surface, x, y):
     """指定された位置に1つのミノを描画する"""
-    for i in range(len(mino.shape[mino.rotation])):
-        for j in range(len(mino.shape[mino.rotation][i])):
+    for i in range(MINO_GRID_SIZE):
+        for j in range(MINO_GRID_SIZE):
             if mino.shape[mino.rotation][i][j] == 1:
                 pygame.draw.rect(surface, mino.color,
                                (x + j*BLOCK_SIZE, y + i*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)

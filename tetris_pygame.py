@@ -8,7 +8,7 @@ from Tetris_module import valid_space,lock_mino,create_grid,keyOperation,check_l
 from Tetris_module import draw_next_shape
 from constants import (
     S_WIDTH, S_HEIGHT, PLAY_WIDTH, PLAY_HEIGHT, BLOCK_SIZE,
-    GRID_WIDTH, GRID_HEIGHT, MINO_START_X, MINO_START_Y
+    GRID_WIDTH, GRID_HEIGHT, MINO_START_X, MINO_START_Y, MINO_GRID_SIZE
 )
 from shapes import SHAPES, SHAPE_COLORS
 
@@ -67,8 +67,8 @@ def main():
                 score = clear_rows(locked_positions, score)  # ライン消し関数
 
         #draw current_mino in grid
-        for i in range(len(current_mino.shape[current_mino.rotation])):  # 5
-            for j in range(len(current_mino.shape[current_mino.rotation][i])):  # 5
+        for i in range(MINO_GRID_SIZE):
+            for j in range(MINO_GRID_SIZE):
                 if current_mino.shape[current_mino.rotation][j][i] == 1:
                     grid[j+current_mino.y][i+current_mino.x] = current_mino.color
 
