@@ -85,10 +85,8 @@ def create_grid(locked_pos):
 
 
 def keyOperation(game_running, key, grid, current_mino):
-    if key == pygame.K_ESCAPE:
-        game_running = False
-        pygame.display.quit()
-    elif key == pygame.K_LEFT:
+    # ESCキーの処理は main() で行うため、ここでは処理しない
+    if key == pygame.K_LEFT:
         current_mino.x -= 1
         if not valid_space(grid, current_mino):
             current_mino.x += 1
