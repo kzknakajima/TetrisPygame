@@ -92,61 +92,51 @@ def test_create_grid_returns_deep_copy():
     assert locked[0][0] == (0, 0, 0)
 
 
-def test_keyOperation_handles_boundaries_and_hard_drop():
-    # 右端の移動制限とハードドロップの挙動を確認
+def test_keyOperation_left_key():
+    """左キー: 正常な移動 + 左端での制限"""
     locked = empty_grid()
     grid = create_grid(locked)
 
-    right_edge_mino = DummyMino(GRID_WIDTH - 2, 0, O)
-    _, moved_mino = keyOperation(True, pygame.K_RIGHT, grid, right_edge_mino)
-    assert moved_mino.x == GRID_WIDTH - 2
-
-    drop_mino = DummyMino(0, 0, O)
-    _, dropped = keyOperation(True, pygame.K_RSHIFT, grid, drop_mino)
-    assert dropped.y == GRID_HEIGHT - 4
-
-
-def test_keyOperation_reverts_invalid_rotation():
-    # 回転が衝突する場合に元の回転へ戻ることを確認
-    locked = empty_grid()
-    blocking_x, blocking_y = 4, 2
-    locked[blocking_y][blocking_x] = (255, 0, 0)
-    grid = create_grid(locked)
-
-    mino = DummyMino(3, 0, I, rotation=0)
-    _, rotated = keyOperation(True, pygame.K_UP, grid, mino)
-
-    assert rotated.rotation == 0
-
-
-def test_keyOperation_handles_left_key():
-    # 左キーの移動と左端での移動制限を確認
-    locked = empty_grid()
-    grid = create_grid(locked)
-
-    # 左に移動できることを確認
+    # 正常な移動: 左に移動できることを確認
     mino = DummyMino(5, 5, O)
     _, moved_mino = keyOperation(True, pygame.K_LEFT, grid, mino)
     assert moved_mino.x == 4
 
-    # 左端では移動できないことを確認
+    # 左端制限: 左端では移動できないことを確認
     # Oミノは相対位置(2,1)から始まるので、x=-1が実質的な左端
     left_edge_mino = DummyMino(-1, 5, O)
     _, edge_mino = keyOperation(True, pygame.K_LEFT, grid, left_edge_mino)
     assert edge_mino.x == -1  # 移動できず、x=-1のまま
 
 
-def test_keyOperation_handles_down_key():
-    # 下キーの移動と下方向の衝突を確認
+def test_keyOperation_right_key():
+    """右キー: 正常な移動 + 右端での制限"""
     locked = empty_grid()
     grid = create_grid(locked)
 
-    # 下に移動できることを確認
+    # 正常な移動: 右に移動できることを確認
+    mino = DummyMino(3, 5, O)
+    _, moved_mino = keyOperation(True, pygame.K_RIGHT, grid, mino)
+    assert moved_mino.x == 4
+
+    # 右端制限: 右端では移動できないことを確認
+    # Oミノは相対位置(2,1)から(2,2)まで占有するので、x=GRID_WIDTH-2が実質的な右端
+    right_edge_mino = DummyMino(GRID_WIDTH - 2, 5, O)
+    _, edge_mino = keyOperation(True, pygame.K_RIGHT, grid, right_edge_mino)
+    assert edge_mino.x == GRID_WIDTH - 2  # 移動できず、そのまま
+
+
+def test_keyOperation_down_key():
+    """下キー: 正常な移動 + 衝突時の制限"""
+    locked = empty_grid()
+    grid = create_grid(locked)
+
+    # 正常な移動: 下に移動できることを確認
     mino = DummyMino(5, 5, O)
     _, moved_mino = keyOperation(True, pygame.K_DOWN, grid, mino)
     assert moved_mino.y == 6
 
-    # 下に障害物がある場合は移動できないことを確認
+    # 衝突時の制限: 下に障害物がある場合は移動できないことを確認
     # Oミノはx=5,y=5の時、実際には(6,7),(7,7),(6,8),(7,8)を占有
     # 下に移動すると(6,8),(7,8),(6,9),(7,9)を占有する
     # y=9の位置に障害物を配置して移動を防ぐ
@@ -158,3 +148,35 @@ def test_keyOperation_handles_down_key():
     blocked_mino = DummyMino(5, 5, O)
     _, result_mino = keyOperation(True, pygame.K_DOWN, grid_with_obstacle, blocked_mino)
     assert result_mino.y == 5  # 移動できず、y=5のまま
+
+
+def test_keyOperation_rotation():
+    """回転キー: 正常な回転 + 衝突時の復帰"""
+    locked = empty_grid()
+    grid = create_grid(locked)
+
+    # 正常な回転: 回転できることを確認
+    mino = DummyMino(5, 5, I, rotation=0)
+    _, rotated_mino = keyOperation(True, pygame.K_UP, grid, mino)
+    assert rotated_mino.rotation == 1
+
+    # 衝突時の復帰: 回転が衝突する場合に元の回転へ戻ることを確認
+    locked_with_obstacle = empty_grid()
+    blocking_x, blocking_y = 4, 2
+    locked_with_obstacle[blocking_y][blocking_x] = (255, 0, 0)
+    grid_with_obstacle = create_grid(locked_with_obstacle)
+
+    blocked_mino = DummyMino(3, 0, I, rotation=0)
+    _, result_mino = keyOperation(True, pygame.K_UP, grid_with_obstacle, blocked_mino)
+    assert result_mino.rotation == 0  # 回転できず、元の回転状態のまま
+
+
+def test_keyOperation_hard_drop():
+    """ハードドロップ: 最下部まで落下"""
+    locked = empty_grid()
+    grid = create_grid(locked)
+
+    # ハードドロップの動作: 一番下まで落下することを確認
+    drop_mino = DummyMino(0, 0, O)
+    _, dropped = keyOperation(True, pygame.K_RSHIFT, grid, drop_mino)
+    assert dropped.y == GRID_HEIGHT - 4  # Oミノは4マスの高さなので、GRID_HEIGHT-4が最下部
