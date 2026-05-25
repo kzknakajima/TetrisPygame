@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <h2 class="mb-4">本を追加</h2>
+    <form method="post">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">タイトル <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="title" required
+               value="{{ request.form.get('title', '') }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">著者 <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="author" required
+               value="{{ request.form.get('author', '') }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">ジャンル</label>
+        <input type="text" class="form-control" name="genre" placeholder="例：小説、ビジネス、技術書..."
+               value="{{ request.form.get('genre', '') }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">読書状態</label>
+        <select class="form-select" name="status">
+          <option value="unread" {% if request.form.get('status', 'unread') == 'unread' %}selected{% endif %}>未読</option>
+          <option value="reading" {% if request.form.get('status') == 'reading' %}selected{% endif %}>読書中</option>
+          <option value="read" {% if request.form.get('status') == 'read' %}selected{% endif %}>読了</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">評価</label>
+        <select class="form-select" name="rating">
+          <option value="">未評価</option>
+          <option value="1" {% if request.form.get('rating') == '1' %}selected{% endif %}>★☆☆☆☆ (1)</option>
+          <option value="2" {% if request.form.get('rating') == '2' %}selected{% endif %}>★★☆☆☆ (2)</option>
+          <option value="3" {% if request.form.get('rating') == '3' %}selected{% endif %}>★★★☆☆ (3)</option>
+          <option value="4" {% if request.form.get('rating') == '4' %}selected{% endif %}>★★★★☆ (4)</option>
+          <option value="5" {% if request.form.get('rating') == '5' %}selected{% endif %}>★★★★★ (5)</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="form-label fw-semibold">メモ・感想</label>
+        <textarea class="form-control" name="memo" rows="4"
+                  placeholder="感想や気になった点など...">{{ request.form.get('memo', '') }}</textarea>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success">登録する</button>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">キャンセル</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
